@@ -1,38 +1,7 @@
 import json
 import time
 
-
-class BirthRule:
-    @staticmethod
-    def apply(cell, live_neighbors):
-        if cell == 0 and live_neighbors == 3:
-            return 1
-        return None
-
-
-class LonelyDeathRule:
-    @staticmethod
-    def apply(cell, live_neighbors):
-        if cell == 1 and live_neighbors < 2:
-            return 0
-        return None
-
-
-class StayAliveRule:
-    @staticmethod
-    def apply(cell, live_neighbors):
-        if cell == 1 and 2 <= live_neighbors <= 3:
-            return 1
-        return None
-
-
-class OverPopulateRule:
-    @staticmethod
-    def apply(cell, live_neighbors):
-        if cell == 1 and live_neighbors > 3:
-            return 0
-        return None
-
+from game_rules import rules_factory
 
 class Grid:
     def __init__(self, rows, cols):
@@ -71,7 +40,8 @@ class Game:
 
                 new_cell = None
                 for rule in self.rules:
-                    result = rule.apply(cell, alive_neighbors)
+                    rule_callable = rules_factory[rule]
+                    result = rule_callable(cell, alive_neighbors)
                     if result is not None:
                         new_cell = result
                         break
@@ -84,7 +54,6 @@ class Game:
 def main():
     with open("game_config.json") as json_file:
         game_config = json.load(json_file)
-
 
     game = Game(game_config["rows"], game_config["cols"], game_config["rules"])
 
