@@ -1,3 +1,4 @@
+import json
 import time
 
 
@@ -81,16 +82,11 @@ class Game:
 
 
 def main():
-    config = {
-        "rows": 20,
-        "cols": 20,
-        "generations": 120,
-        "rules": [BirthRule, StayAliveRule, LonelyDeathRule, OverPopulateRule],
-        "sleep_time": 0.1,
-        "output_type": "visualizer",  # console | visualizer
-    }
+    with open("game_config.json") as json_file:
+        game_config = json.load(json_file)
 
-    game = Game(config["rows"], config["cols"], config["rules"])
+
+    game = Game(game_config["rows"], game_config["cols"], game_config["rules"])
 
     game.grid.grid[0][2] = 1
     game.grid.grid[1][3] = 1
@@ -98,16 +94,16 @@ def main():
     game.grid.grid[2][2] = 1
     game.grid.grid[2][3] = 1
 
-    if config["output_type"] == "visualizer":
+    if game_config["output_type"] == "visualizer":
         from visualizer import visualize
-
-        visualize(game, config["generations"], config["sleep_time"])
-    elif config["output_type"] == "console":
-        for generation in range(1, config["generations"] + 1):
+        visualize(game, game_config["generations"], game_config["sleep_time"])
+        
+    elif game_config["output_type"] == "console":
+        for generation in range(1, game_config["generations"] + 1):
             game.update()
             print(f"Generation {generation}:\n")
             print(game.grid)
-            time.sleep(config["sleep_time"])
+            time.sleep(game_config["sleep_time"])
 
 
 if __name__ == "__main__":
