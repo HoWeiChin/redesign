@@ -1,66 +1,72 @@
 import unittest
-from game_of_life import BirthRule, LonelyDeathRule, StayAliveRule, OverPopulateRule, Grid, Game
+
+from game_of_life import Game, Grid
+from game_rules import rules_factory
 
 
-class TestBirthRule(unittest.TestCase):
+class Testbirth_rule(unittest.TestCase):
+    birth_rule = rules_factory["BirthRule"]
     def test_birth_rule_with_dead_cell_and_three_live_neighbors(self):
-        self.assertEqual(BirthRule.apply(0, 3), 1, "Dead cell with 3 live neighbors should be born.")
+        self.assertEqual(birth_rule(0, 3), 1, "Dead cell with 3 live neighbors should be born.")
 
     def test_birth_rule_with_dead_cell_and_two_live_neighbors(self):
-        self.assertIsNone(BirthRule.apply(0, 2), "Dead cell with 2 live neighbors should remain dead.")
+        self.assertIsNone(birth_rule.apply(0, 2), "Dead cell with 2 live neighbors should remain dead.")
 
     def test_birth_rule_with_alive_cell(self):
-        self.assertIsNone(BirthRule.apply(1, 3), "Alive cell should not be affected by BirthRule.")
+        self.assertIsNone(birth_rule.apply(1, 3), "Alive cell should not be affected by birth_rule.")
 
     def test_birth_rule_with_dead_cell_and_four_live_neighbors(self):
-        self.assertIsNone(BirthRule.apply(0, 4), "Dead cell with 4 live neighbors should remain dead.")
+        self.assertIsNone(birth_rule.apply(0, 4), "Dead cell with 4 live neighbors should remain dead.")
 
 
-class TestLonelyDeathRule(unittest.TestCase):
+class Testlonely_death_rule(unittest.TestCase):
+    lonely_death_rule = rules_factory["LonelyDeathRule"]
     def test_lonely_death_rule_with_alive_cell_and_one_live_neighbor(self):
-        self.assertEqual(LonelyDeathRule.apply(1, 1), 0, "Alive cell with 1 live neighbor should die.")
+        self.assertEqual(lonely_death_rule.apply(1, 1), 0, "Alive cell with 1 live neighbor should die.")
 
     def test_lonely_death_rule_with_alive_cell_and_zero_live_neighbors(self):
-        self.assertEqual(LonelyDeathRule.apply(1, 0), 0, "Alive cell with 0 live neighbors should die.")
+        self.assertEqual(lonely_death_rule.apply(1, 0), 0, "Alive cell with 0 live neighbors should die.")
 
     def test_lonely_death_rule_with_alive_cell_and_two_live_neighbors(self):
-        self.assertIsNone(LonelyDeathRule.apply(1, 2), "Alive cell with 2 live neighbors should not be affected by LonelyDeathRule.")
+        self.assertIsNone(lonely_death_rule.apply(1, 2), "Alive cell with 2 live neighbors should not be affected by lonely_death_rule.")
 
     def test_lonely_death_rule_with_dead_cell(self):
-        self.assertIsNone(LonelyDeathRule.apply(0, 1), "Dead cell should not be affected by LonelyDeathRule.")
+        self.assertIsNone(lonely_death_rule.apply(0, 1), "Dead cell should not be affected by lonely_death_rule.")
 
 
-class TestStayAliveRule(unittest.TestCase):
+class Teststay_alive_rule(unittest.TestCase):
+    stay_alive_rule = rules_factory["stay_alive_rule"]
     def test_stay_alive_rule_with_alive_cell_and_two_live_neighbors(self):
-        self.assertEqual(StayAliveRule.apply(1, 2), 1, "Alive cell with 2 live neighbors should stay alive.")
+        self.assertEqual(stay_alive_rule.apply(1, 2), 1, "Alive cell with 2 live neighbors should stay alive.")
 
     def test_stay_alive_rule_with_alive_cell_and_three_live_neighbors(self):
-        self.assertEqual(StayAliveRule.apply(1, 3), 1, "Alive cell with 3 live neighbors should stay alive.")
+        self.assertEqual(stay_alive_rule.apply(1, 3), 1, "Alive cell with 3 live neighbors should stay alive.")
 
     def test_stay_alive_rule_with_alive_cell_and_one_live_neighbor(self):
-        self.assertIsNone(StayAliveRule.apply(1, 1),
-                          "Alive cell with 1 live neighbor should not be affected by StayAliveRule.")
+        self.assertIsNone(stay_alive_rule.apply(1, 1),
+                          "Alive cell with 1 live neighbor should not be affected by stay_alive_rule.")
 
     def test_stay_alive_rule_with_alive_cell_and_four_live_neighbors(self):
-        self.assertIsNone(StayAliveRule.apply(1, 4),
-                          "Alive cell with 4 live neighbors should not be affected by StayAliveRule.")
+        self.assertIsNone(stay_alive_rule.apply(1, 4),
+                          "Alive cell with 4 live neighbors should not be affected by stay_alive_rule.")
 
     def test_stay_alive_rule_with_dead_cell(self):
-        self.assertIsNone(StayAliveRule.apply(0, 2), "Dead cell should not be affected by StayAliveRule.")
+        self.assertIsNone(stay_alive_rule.apply(0, 2), "Dead cell should not be affected by stay_alive_rule.")
 
 
-class TestOverPopulateRule(unittest.TestCase):
+class Testoverpopulate_rule(unittest.TestCase):
+    overpopulate_rule = rules_factory["overpopulate_rule"]
     def test_over_populate_rule_with_alive_cell_and_four_live_neighbors(self):
-        self.assertEqual(OverPopulateRule.apply(1, 4), 0, "Alive cell with 4 live neighbors should die.")
+        self.assertEqual(overpopulate_rule.apply(1, 4), 0, "Alive cell with 4 live neighbors should die.")
 
     def test_over_populate_rule_with_alive_cell_and_five_live_neighbors(self):
-        self.assertEqual(OverPopulateRule.apply(1, 5), 0, "Alive cell with 5 live neighbors should die.")
+        self.assertEqual(overpopulate_rule.apply(1, 5), 0, "Alive cell with 5 live neighbors should die.")
 
     def test_over_populate_rule_with_alive_cell_and_three_live_neighbors(self):
-        self.assertIsNone(OverPopulateRule.apply(1, 3), "Alive cell with 3 live neighbors should not be affected by OverPopulateRule.")
+        self.assertIsNone(overpopulate_rule.apply(1, 3), "Alive cell with 3 live neighbors should not be affected by overpopulate_rule.")
 
     def test_over_populate_rule_with_dead_cell(self):
-        self.assertIsNone(OverPopulateRule.apply(0, 4), "Dead cell should not be affected by OverPopulateRule.")
+        self.assertIsNone(overpopulate_rule.apply(0, 4), "Dead cell should not be affected by overpopulate_rule.")
 
 
 class TestGrid(unittest.TestCase):
@@ -103,7 +109,7 @@ class TestGrid(unittest.TestCase):
 
 class TestGame(unittest.TestCase):
     def setUp(self):
-        self.rules = [BirthRule, LonelyDeathRule, StayAliveRule, OverPopulateRule]
+        self.rules = [birth_rule, lonely_death_rule, stay_alive_rule, overpopulate_rule]
 
     def test_grid_1(self):
         initial_state = [

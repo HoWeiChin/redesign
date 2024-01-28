@@ -2,7 +2,6 @@
     "rows": 20,
     "cols": 20,
     "generations": 120,
-    "rules": ["BirthRule", "StayAliveRule", "LonelyDeathRule", "OverPopulateRule"],
     "sleep_time": 0.1,
     "output_type": "visualizer"
 }
