@@ -109,7 +109,7 @@ class TestGrid(unittest.TestCase):
 
 class TestGame(unittest.TestCase):
     def setUp(self):
-        self.rules = [birth_rule, lonely_death_rule, stay_alive_rule, overpopulate_rule]
+        self.rules = [rules_factory.values()]
 
     def test_grid_1(self):
         initial_state = [
