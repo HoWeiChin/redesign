@@ -2,28 +2,37 @@ import json
 import time
 
 from game_rules import rules_factory
+from cell import TwoDCoord, TwoDCell, is_in_bound_2d, is_same_coord, offset_2d_coord
+
 
 class Grid:
     def __init__(self, rows, cols):
-        self.rows = rows
-        self.cols = cols
-        self.grid = [[0] * self.cols for _ in range(self.rows)]
+        self.start_coord = TwoDCoord(0, 0)
+        self.end_coord = TwoDCoord(rows, cols)
+        self.cells = [TwoDCell(TwoDCoord(row, col))
+                      for row in range(rows) for col in range(cols)]
 
-    def is_cell_in_bounds(self, row, col):
-        return 0 <= row < self.rows and 0 <= col < self.cols
+    def is_alive(self, coord: TwoDCoord) -> bool:
 
-    def is_alive(self, row, col):
-        return self.grid[row][col] == 1 if self.is_cell_in_bounds(row, col) else 0
+        if not is_in_bound_2d(self.start_coord, self.end_coord, coord):
+            raise ValueError(
+                "Coord {coord} is not in bound of start: {self.start_coord} and end: {self.end_coord}")
 
-    def alive_neighbors(self, row, col):
-        offsets = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+        target_cell = None
+        for cell in self.cells:
+            if is_same_coord(coord, cell):
+                target_cell = cell
+                break
+
+        return target_cell.is_alive
+
+    def alive_neighbors(self, coord: TwoDCell):
+        offsets = [TwoDCoord(x=-1, y=-1), TwoDCoord(x=-1, y=0), TwoDCoord(x=-1, y=1), TwoDCoord(x=0, y=-1),
+                   TwoDCoord(x=0, y=1), TwoDCoord(x=1, y=-1), TwoDCoord(x=1, y=0), TwoDCoord(x=1, y=1)]
         return sum(
-            [self.is_alive(row + off_y, col + off_x) for off_y, off_x in offsets]
+            [self.is_alive(offset_2d_coord(coord, offset_coord))
+             for offset_coord in offsets]
         )
-
-    def __str__(self):
-        rows = ["  ".join(map(str, row)) for row in self.grid]
-        return "\n".join(rows)
 
 
 class Game:
@@ -32,7 +41,8 @@ class Game:
         self.rules = rules if rules else []
 
     def update(self):
-        new_grid = [[0 for _ in range(self.grid.cols)] for _ in range(self.grid.rows)]
+        new_grid = [[0 for _ in range(self.grid.cols)]
+                    for _ in range(self.grid.rows)]
         for row in range(self.grid.rows):
             for col in range(self.grid.cols):
                 cell = self.grid.grid[row][col]
@@ -66,7 +76,7 @@ def main():
     if game_config["output_type"] == "visualizer":
         from visualizer import visualize
         visualize(game, game_config["generations"], game_config["sleep_time"])
-        
+
     elif game_config["output_type"] == "console":
         for generation in range(1, game_config["generations"] + 1):
             game.update()
